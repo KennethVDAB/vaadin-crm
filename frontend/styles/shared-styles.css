@@ -1,0 +1,21 @@
+/* List view */
+.list-view .content {
+    display: flex;
+}
+
+.list-view .contact-grid {
+    flex: 2; /* 2/3 to the grid en 1/3 to form*/
+}
+
+.list-view .contact-form {
+    flex: 1;
+    padding: var(--lumo-space-m); /* Vaadin custom theme: add standard padding in form */
+}
+
+@media all and (max-width: 1100px) {
+    .list-view.editing .toolbar,
+    .list-view.editing .contact-grid {
+        display: none;
+    }
+}
+
