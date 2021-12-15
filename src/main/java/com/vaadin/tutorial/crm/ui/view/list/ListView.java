@@ -1,32 +1,37 @@
-package com.vaadin.tutorial.crm.ui;
+package com.vaadin.tutorial.crm.ui.view.list;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
 import com.vaadin.tutorial.crm.backend.service.CompanyService;
 import com.vaadin.tutorial.crm.backend.service.ContactService;
+import com.vaadin.tutorial.crm.ui.MainLayout;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 //Maps the view to the route
-@Route("")
-@CssImport("./styles/shared-styles.css")
-public class MainView extends VerticalLayout {
+@Component
+@Scope("prototype")
+@Route(value = "", layout = MainLayout.class)
+@PageTitle("Contacts | Vaadin CRM")
+public class ListView extends VerticalLayout {
 
     private final ContactService contactService;
     private final CompanyService companyService;
 
-    private final Grid<Contact> grid = new Grid<>(Contact.class);
+    final Grid<Contact> grid = new Grid<>(Contact.class);
     private final TextField filterText = new TextField();
-    private final ContactForm form;
+    final ContactForm form;
 
-    public MainView(ContactService contactService, CompanyService companyService) {
+    public ListView(ContactService contactService, CompanyService companyService) {
         this.contactService = contactService;
         this.companyService = companyService;
         addClassName("list-view");
@@ -34,10 +39,10 @@ public class MainView extends VerticalLayout {
 
         configureGrid();
 
-        form = new ContactForm(companyService.findAll());
-        form.addListener(ContactForm.SaveEvent.class, this::saveContact);
-        form.addListener(ContactForm.DeleteEvent.class, this::deleteContact);
-        form.addListener(ContactForm.CloseEvent.class, e -> closeEditor());
+        form = new com.vaadin.tutorial.crm.ui.view.list.ContactForm(companyService.findAll());
+        form.addListener(com.vaadin.tutorial.crm.ui.view.list.ContactForm.SaveEvent.class, this::saveContact);
+        form.addListener(com.vaadin.tutorial.crm.ui.view.list.ContactForm.DeleteEvent.class, this::deleteContact);
+        form.addListener(com.vaadin.tutorial.crm.ui.view.list.ContactForm.CloseEvent.class, e -> closeEditor());
         closeEditor();
 
         Div content = new Div(grid, form);
@@ -74,12 +79,12 @@ public class MainView extends VerticalLayout {
         editContact(new Contact());
     }
 
-    private void saveContact(ContactForm.SaveEvent event) {
+    private void saveContact(com.vaadin.tutorial.crm.ui.view.list.ContactForm.SaveEvent event) {
         contactService.save(event.getContact());
         updateList();
         closeEditor();
     }
-    private void deleteContact(ContactForm.DeleteEvent event) {
+    private void deleteContact(com.vaadin.tutorial.crm.ui.view.list.ContactForm.DeleteEvent event) {
         contactService.delete(event.getContact());
         updateList();
         closeEditor();
